@@ -169,7 +169,7 @@ void scoreboard(){
 if (null == 200){
 
 
-		  ytrig=ytrig+tan(key);
+		  ytrig=ytrig-(tan(key)/4);
 			 xtrig=xtrig-tan(key);
 			 //   l=l+200;
 			   }
