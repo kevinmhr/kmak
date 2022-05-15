@@ -24,18 +24,19 @@ byte far *VGA=(byte far *)0xA0000000L;
 #define SETPIX(x,y,c) *(VGA+(x)+(y)+height)=c
 #define GETPIX(x,y,c) *(VGA+(x)+(y)*height)=c
 #define TARGPIX(targx,targy,c) *(VGA+(targx)+(targy)*320)=c
+#define BULLETPIX(targx,targy,c) *(VGA+(targx)+(targy)*320)=c
 
 //#define MAX(x,y) ((x) > (y) ? (x) : (y))
 //#define MIN(x,y) ((x) < (y) ? (x) : (y))
-  int i,k,l,c,o,z,p;
+  int i,k,l,c,o,z,p,s;
   int xtrig=100;
   int ytrig=100;
   int r;
   int ol=0;
 int x=100;
 int  y=150;
-int targx;
-int targy;
+int targx,bullx,tempx;
+int targy,bully,tempy;
 int null=100;
 int key;
 int re;
@@ -55,6 +56,22 @@ int charay[]={2,3,3,4,5,5,6,4,9,9,1,1,1,4,5,6,7,7,7,7,1,1,1,4,5,6,7,7,7,7,2,3,3,
 
 
 
+
+
+
+
+
+
+int iconx[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4};
+int icony[]={2,3,3,4,5,5,6,4,9,9,1,1,1,4,5,6,7,7,7,7,1,1,1,4,5,6,7,7,7,7,2,3,3,5,5,6,4,4,9,9,};
+
+
+
+
+
+
+
+
 int charac[]={3,3,3,3,3,3,3,3,3,3,4,2,2,2,2,2,2,2,2,4,4,2,2,2,2,2,2,2,2,4,3,3,3,3,3,3,3,3,3,3};
 void put_pixels(){
 
@@ -71,29 +88,24 @@ void put_pixels(){
 
 
 
-int snd(void)
+void snd()
 {
-   int snu;
-   for (snu=0;snu<20000;snu++){
+  int snu;
+   for (snu=9900;snu<10000;snu++){
 
    sound(snu);
  }
- //  delay(1);
- //  nosound();
-   return 0;
+ 
 }
 void default_scene()
 		       {
-	   for (l=0;l<40;l++){
+	   for (s=0;s<40;s++){
 
 
-	     TARGPIX(xtrig+ballx[l],ytrig+bally[l],3+co);
+	     TARGPIX(xtrig+ballx[s],ytrig+bally[s],3+co);
 
 
-
-	   //   charax[l]=charax[l]+0.1;
-
-	    //  charay[l]=charay[l]+0.1;
+ 
 
 
 
@@ -107,9 +119,7 @@ void chara()
 
 		GETPIX( charax[l]+x, charay[l]+y, charac[l] );
 
-	   //   charax[l]=charax[l]+0.1;
-
-	    //  charay[l]=charay[l]+0.1;
+ 
 
 	      charac[l]=charac[l+key]+1;
 
@@ -120,11 +130,11 @@ void chara()
 
 void clsc(){
 
-	       //	GETPIX( charax[l]+x, charay[l]+y, charac[l] );
+ 
        for(l=0;l<200;l++){
 
 
-
+ 
   for(c=0;c<320;c++){
 
 
@@ -139,43 +149,40 @@ void clsc(){
 
  }
 
+
 void colli(){
 	    null=0;
-       //	    if (targx= key-x) {
-	      //	GETPIX( x+320,y*200, charac[l] );
-	  if (ol == 3 | y == ytrig)
-	//  if ( y == ytrig)
-	   if (x == xtrig){
+ 
+ 
+	   if (  bullx == xtrig && xtrig==x && bully-l==ytrig ){
 	    null=200;
-					  co=co+1;
-				       //	  re=co;
-			   xtrig=xtrig+10;
-       chara();
-			 snd();
-			      // targx=xtrig*2;
 
-				   // system(beep);
-					      //	 GETPIX(ballx[l]++ ,bally[l]++,bally[l]++  );
-					      //	c=c-1;l=l-1;
+
+		       co=co+1;
+
+	 
+ 
+			 snd();
+			 
 
 
 }
-
-//
+ 
 
 }
 void scoreboard(){
 
 if (null == 200){
+	   int sc;
+	   sc=sc+1;
 
 
-		  ytrig=ytrig-(tan(key)/4);
-			 xtrig=xtrig-tan(key);
-			 //   l=l+200;
+		  ytrig=ytrig-(tan(key)/4);xtrig=xtrig-tan(key);
+
+		 
 			   }
 
-			 null=0;
-
+ 
 }
 
 void bullet()    {
@@ -184,18 +191,34 @@ void bullet()    {
 
 		 if (ol ==     3)
 			    {
-			    for (key=0;key<60;key++){
+
+				bullx=x;
+			    bully=y;
+
+			     for(l=0;l<ytrig;l++){
+			      xtrig=xtrig-1;
+
+			      for(int t=0;t<2000
+			      ;t++){
 
 
-		       sound(1000);
-			// null=0;
-			delay(1);
-   nosound();
-			   // if (key>200+y){key=200-y;}
-			GETPIX(x+3, y-key,ballx[key]  );
-			GETPIX(x+3, y-key+2,0  );
 
-			} }
+			    sound(l+700);
+			      co=co;
+
+
+
+
+ 
+			BULLETPIX(bullx+3, (bully-l),ballx[l]  );
+
+			   colli();
+
+ 
+			BULLETPIX(bullx+3, (bully-l)+2,0  );
+			 default_scene();
+	 
+			} }             }
 	ol=0;
 
 }
@@ -223,7 +246,7 @@ int main(){
 
 
   {
-//if (y!=targy){x=targx;}
+ 
 
 
 
@@ -236,28 +259,34 @@ if (z>0){z=0;}
 if (ytrig<30){ytrig=190;}
 if (co>10){co=2;}
 if (xtrig<0){xtrig=320; }
-xtrig=xtrig-1;
+//xtrig=xtrig-1;
 
+if (y == ytrig && x == xtrig){ snd(); co=co+1;null=200;  }
 
-clsc();
-
+scoreboard();
 chara();
 
 k=k*z;
 
 x=x+o;
 y=y+r;
-colli();
+
 //null=0;
-scoreboard();
+ colli();
 //l++;
 //player();
 key++;
-bullet();
-//co=0;
-//put_pixels();       //	i=i+1;
 
- default_scene();
+bullet();
+
+
+ xtrig=xtrig-1;
+  default_scene();
+    nosound();
+ 
+
+
+clsc();
 
     if(kbhit()) {
 
