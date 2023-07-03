@@ -238,17 +238,17 @@ void caar(){
 
 
 
-	 for (int carp=0;carp<30;carp++){
-	 for (int cari=0;cari<30;cari++){
-		    for (int t=0;t<10;t++){
+	 for (int carp=0;carp<100;carp++){
+	 for (int cari=0;cari<100;cari++){
+		    for (int t=0;t<100;t++){
 
 
-			      GETPIX(yscroll+carp*5,yscroll+cari*5,sc);
-	      GETPIX(xscroll+carp*10+x+sc,yscroll+cari*5+sc,sc);
-		   GETPIX(xscroll*cari,yscroll^tri,4+tri);
-	      GETPIX(xscroll+carp*10+x+sc,yscroll+cari*10+y,1);
-		      GETPIX(xscroll*carp,yscroll^tri,4+tri);
-	      GETPIX(xscroll+cari*10+x,yscroll+cari*10+y+sc,1);
+	 //		      GETPIX(yscroll+carp*5,yscroll+cari*5,sc);
+	   //   GETPIX(xscroll+carp*10+x+sc,yscroll+cari*5+sc,sc);
+	     //	   GETPIX(xscroll*cari,yscroll^tri,4+tri);
+	     // GETPIX(xscroll+carp*10+x+sc,yscroll+cari*10+y,1);
+	       //	      GETPIX(xscroll*carp,yscroll^tri,4+tri);
+	     // GETPIX(xscroll+cari*10+x,yscroll+cari*10+y+sc,1);
 
 
 
@@ -267,7 +267,7 @@ void chara(tri)
 		       //	   GETPIX ( iconx[1]+carp+100,icony[3]+sc,t);
 			  GETPIX ( sc,carp*2+20,t);
 
-			GETPIX( ballx[carp/2
+			GETPIX( ballx[carp
 			]+xtrig[tri], bally[carp]+ytrig[tri], 3 );
 
 
@@ -459,7 +459,7 @@ if (xscroll>=310){xscroll==10; }
 
 if (xtrig[tri]>310){xtrig[tri]=xtrig[tri]; }
 if (xtrig[tri]<10){xtrig[tri]=10; }
-if (ytrig[tri]<10){ytrig[tri]=10;re1=re1-1; }
+if (ytrig[tri]<10){ytrig[tri]=10;re1=re1-1;xtrig[tri]=xtrig[tri]-20; }
 if (t>=30){t==1;}
 
 
@@ -537,13 +537,13 @@ if (sc>-30){sc=-30;}
 //ytrig[tri]++;
 //icon();
 
-ytrig[tri]++;
+
 
 caar();
 
   default_scene3();
 //default_scene();
-                
+
 
 
 
@@ -586,11 +586,11 @@ if(
 	     gh=gh*2;
 
 
-xtrig[tri]=x+y*2;tri=tri-1;y=y+t;t=t/20;  }
+xtrig[tri]=x+y*2;tri=tri+5;y=y+t;t=t/20;  }
 if (sc>1){key=key*100000;}
 if (sc>=200){sc--;}
 
-tri++;
+
 
 
   chara(tri);
@@ -716,6 +716,4 @@ chara(tri);
 }
 //default_scene();
 	 set_mode( TEXT_MODE );
-
-  return 0;
-	}
+         }
