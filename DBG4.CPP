@@ -42,7 +42,7 @@ int  y=150;
 //#define MAX(x,y) ((x) > (y) ? (x) : (y))
 //#define MIN(x,y) ((x) < (y) ? (x) : (y))
   int i,k,c,o,z,p,s,move,t;
-
+  int bulletl=1;
   int l=1;
   int g=1;
   int r,flat;
@@ -231,7 +231,7 @@ void default_scene()
 
 
 	      GETPIX(charax[t]+(x),charay[t]+y,bally[x]);
-	    
+
 			    }
 
 
@@ -370,41 +370,51 @@ k=k*z;
 
 
 }
+collide(){
+if(
 
+
+  charax[tri]+(x) == xtrig[tri]+5 & charay[tri]+(y)-bulletl == ytrig[tri]
+
+
+)
+
+
+{co++; snd();sc=sc+10;
+
+
+		      re1=re1*7;
+	  //   mapx[g]=mapx[g+1];
+	     gh=gh+1;
+	     gh=gh*2;
+
+
+xtrig[tri]=x+y*2;tri=tri+x;y=y+t;t=t/20;  }  }
 
 void bullet()    {
 
+		     for (t=0;t<40;t++){
+		  if (ol==1){
 
-
-		 if (ol ==     3)
-			    {
-
-			       //	bullx=x;
-			 //   bully=y;
-
-			     for(l=0;l<200;l++){
-			     // xscroll--;
-			       co=co+1;
-
-
-			    sound(l+2000);
+			     for(bulletl=charay[t]+y;bulletl>0;bulletl--){
 
 
 
 
 
-			BULLETPIX(bullx+l, bully,3  );
-
-			//   colli();
+	      GETPIX(charax[t]+(x),charay[t]+y-bulletl,6);
 
 
-			BULLETPIX((bullx+l)-2, bully,0  );
+			    sound(bulletl+2000);
+
+			 collide();
+
+					}
+			    }
 
 
-			} }
-	ol=0;
 
-}
+}          }
 
 int main(){
 
@@ -466,16 +476,6 @@ if (ytrig[tri]<10){ytrig[tri]=10;re1=re1-1;xtrig[tri]=xtrig[tri]-20; }
 if (t>=30){t==1;}
 
 
-//if (sc<=0 ){ printf (" GAMEOVER " ,s);}
-//if (y == ytrig && x == xtrig){ snd(); co=co+1;null=200;  }
-//x++;
-//t++;
-//key++;
-//xtrig[tri]++;
-//ytrig[tri]++;
-
-//clsc(0);
-
 
 chara(tri);
 
@@ -488,7 +488,7 @@ scoremath();
        put_char (score[re4], 246,10,8,VGA);
 	put_char (score[re5], 238,10,8,VGA);
 	 put_char (score[re6], 230,10,8,VGA);
-		put_char (score[sc], 10,10,8,VGA);
+	    //	put_char (score[sc], 10,10,8,VGA);
 
 		      if (re1>10){ re2=re2+1; re1=1; }
 
@@ -548,48 +548,8 @@ caar();
 //default_scene();
 
 
+bullet();
 
-
-if(
-
- x==xtrig[tri] & y==ytrig[tri]|
- x==xtrig[tri]-1 & y==ytrig[tri]|
- x==xtrig[tri]+1 & y==ytrig[tri]|
-  x==xtrig[tri]+3 & y==ytrig[tri]|
- x==xtrig[tri]-2 & y==ytrig[tri]|
- x==xtrig[tri]+2 & y==ytrig[tri]|
-  x==xtrig[tri] & y==ytrig[tri]|
- x==xtrig[tri]-3 & y==ytrig[tri]|
- x==xtrig[tri]+3 & y==ytrig[tri] |
-  x==xtrig[tri] & y==ytrig[tri]+1|
- x==xtrig[tri] & y==ytrig[tri]-1|
- x==xtrig[tri]+1 & y==ytrig[tri]+1|
-  x==xtrig[tri] & y==ytrig[tri]-1|
- x==xtrig[tri]-2 & y==ytrig[tri]+1|
- x==xtrig[tri]-2 & y==ytrig[tri]-1|
-  x==xtrig[tri]+3 & y==ytrig[tri]+1|
- x==xtrig[tri]+8 & y==ytrig[tri]+8|
- x==xtrig[tri]-8 & y==ytrig[tri]-8
-
-
-
-
-
-
-
-)
-
-
-{co++; snd();sc=sc+10;
-
-
-		      re1=re1*7;
-	  //   mapx[g]=mapx[g+1];
-	     gh=gh+1;
-	     gh=gh*2;
-
-
-xtrig[tri]=x+y*2;tri=tri+x;y=y+t;t=t/20;  }
 if (sc>1){key=key*100000;}
 if (sc>=200){sc--;}
 
@@ -647,6 +607,7 @@ chara(tri);
 	/* special key handling */
 	switch( kc )
 	{
+
 	case 0x48: /* up arrow */
 	     r=r-1;
 	 //  y=y-5;
@@ -654,11 +615,12 @@ chara(tri);
 	   z=z-1;
 	  // o=0;
 	  //strcpy(s, "up arrow");
+	ol=0;
 	break;
 	case 0x4d:
 
 	       //left
-
+	  ol=0;
       //	x=x+5;
 	     // r=0;
 	      o=1;
@@ -667,7 +629,7 @@ chara(tri);
 
 	 break;
 	case 0x4b:
-
+	     ol=0;
 	       //	 r=0;
        //	x=x-5;
 		o=-1;
@@ -681,34 +643,32 @@ chara(tri);
 		  r=1;
        //	  y=y+5;
 	  //strcpy(s, "down arrow");
-
+	    ol=0;
 	   break;
 
 		case 0x52:
 		     //	 for (l=0;l<100;l++){
 
-		     ol=3;
+		ol=1;
 
 		      // charac[l]=0;
 		       //		 }
 				 break;
 	default: /* other special keys */
 
-	    r=0;
-	    o=0;
 
-	  sprintf(s, "00 %02x", kc);
 
+	    ol=0;
+       //	  sprintf(s, "00 %02x", kc);
+	 break;
 	}
       }
 
 
-      else {
 
-  r=0;o=0;
-;
 
-      }
+
+
 //     printf("Key pressed: %s\n", s);
 
 
@@ -719,4 +679,4 @@ chara(tri);
 }
 //default_scene();
 	 set_mode( TEXT_MODE );
-         }
+	 }
