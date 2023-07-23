@@ -21,8 +21,10 @@ int xscroll;
 int gh;
 int yscroll;
 int height= 320;
-int width= 200;
+int width= 240;
 int ff();
+int life=5000;
+
 #define PALETTE_INDEX 0x3C8
 #define PALETTE_DATA 0x3C9
 #include "font.c"
@@ -32,11 +34,15 @@ byte far *VGA=(byte far *)0xA0000000L;
 byte far *GGG=(byte far *)0xA0000000L;
 int x=150;
 int  y=150;
+int charx;
+int chary;
+int showx;
+int showy;
 #define SETPIX(x,y,c) *(VGA+(x)+(y)+height)=c
 #define GETPIX(x,y,c) *(VGA+(x)+(y)*height)=c
 #define TARGPIX(targx,targy,c) *(VGA+(targx)+(targy)*320)=c
 #define BULLETPIX(targx,targy,c) *(VGA+(targx)+(targy)*320)=c
-
+#define PI 3.14
 
 
 //#define MAX(x,y) ((x) > (y) ? (x) : (y))
@@ -45,7 +51,8 @@ int  y=150;
   int bulletl=1;
   int l=1;
   int g=1;
-  int r,flat;
+  int real,reat;
+  int r;
   int ol=0;
 int sc=-10;
 int scxpos=180;
@@ -60,7 +67,7 @@ int re4=1;
 int re5=1;
 int re6=1;
 
-
+int horiz;
 
 
 int co=1;
@@ -83,7 +90,8 @@ int bally[]= {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,
 int charax[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4};
 int charay[]={2,3,3,4,5,5,6,4,9,9,1,1,1,4,5,6,7,7,7,7,1,1,1,4,5,6,7,7,7,7,2,3,3,5,5,6,4,4,9,9,};
 
-
+int roadx[320];
+int roady[240];
 
 
 
@@ -105,18 +113,10 @@ int chix[]={4,4,4,4,4,1,1,1,1,1,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,1,
 	      ,	1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10};
 
 int chiy[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
-		   ,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
+
 	     ,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10
 	    ,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
-	     , 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10
-
-	   ,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
-	   ,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
-	   ,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
-	   ,1,2,3,3,3,3,5,5,9,9,1,1,3,4,5,6,7,7,9,9,1,1,3,4,5,6,7,7,9,9,1,2,3,3,3,3,5,5,9,9
-	   ,1,2,3,3,3,3,5,5,9,9,1,1,3,4,5,6,7,7,9,9,1,1,3,4,5,6,7,7,9,9,1,2,3,3,3,3,5,5,9,9
-	   ,1,2,3,3,3,3,5,5,9,9,1,1,3,4,5,6,7,7,9,9,1,1,3,4,5,6,7,7,9,9,1,2,3,3,3,3,5,5,9,9
-	   ,1,2,3,3,3,3,5,5,9,9,1,1,3,4,5,6,7,7,9,9,1,1,3,4,5,6,7,7,9,9,1,2,3,3,3,3,5,5,9,9};
+	     , 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10};
 
 int location[]={10,90,30,60,20,70};
 
@@ -170,28 +170,99 @@ void snd()
  }  }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+void road(){
+		if (horiz==real){horiz=0;}
+		      for (int real=0;real<240;real++){
+	   for (int reat=0;reat<320;reat++){
+
+
+	       roadx[reat]=reat&real+horiz;
+	       roady[real]=real^reat+horiz;
+
+
+
+		if (roadx[reat]==charx){
+
+
+			if (roady[real]==showy){life=life-100;sound(reat*10);}}
+
+
+		GETPIX(roadx[reat],roady[real],1);
+
+
+
+  }
+
+    }
+
+
+	       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void default_scene_bg()
 		       {
+
+
+			      for (int t=0;t<40;t++){
+			     for (int l=0;l<(life/1000);l++){
+
+		 GETPIX(charax[t]+40+(10*l),charay[t]+5,t);
+
+
+
+			    }}
+
 	    // for (int cari=0;cari<10;cari++){
-	   for (t=0;t<50;t++){
+	   for (int i=0;i<50;i++){
 
 
 	     // GETPIX(car[(t+x)/30]+icony[(t+x)/30]+100,car[(t+y)/30]+icony[(t+y)/30]+100,iconx[1+t]);
 
 
 
-	      GETPIX(t,t,x);
-	      GETPIX((-t)+320,t,x);
-	      GETPIX((-t)+320,(-t)+200,y);
-	      GETPIX((t),(-t)+200,y);
+	      GETPIX(i,i,x);
+	      GETPIX((-i)+320,i,x);
+	      GETPIX((-i)+320,(-i)+200,y);
+	      GETPIX((i),(-i)+200,y);
 			 //     }
 				   }
+
+
+
+
+
+
 
 }
 void default_scene_bg2()
 		       {
 	    // for (int cari=0;cari<10;cari++){
-	   for (t=0;t<10;t++){
+	   for (int t=0;t<10;t++){
 
 
 
@@ -222,17 +293,19 @@ void default_scene3()
 			    }
 
 			}
-void default_scene()
-		       {
-
+void default_scene()   {
 	   for (int t=0;t<40;t++){
+		     charx=charax[t]+(x);
+		     chary=charay[t]+(y);
+	      GETPIX(charx,chary,t);
 
 
 
 
-	      GETPIX(charax[t]+(x),charay[t]+y,bally[x]);
+
 
 			    }
+
 
 
 }
@@ -240,9 +313,9 @@ void caar(){
 
 
 
-	 for (int carp=0;carp<100;carp++){
-	 for (int cari=0;cari<100;cari++){
-		    for (int t=0;t<100;t++){
+
+	 for (int cari=0;cari<2000;cari++){
+		    for (int t=0;t<500;t++){
 
 
 	 //		      GETPIX(yscroll+carp*5,yscroll+cari*5,sc);
@@ -254,7 +327,7 @@ void caar(){
 
 
 
-			} }
+			}
 }}
 
 void chara(tri)
@@ -340,7 +413,12 @@ void clsc(int opaq){
 
 
 void colli(){
+	    for(real=0;real<200;real++){
 
+	   for (reat=0;reat<320;reat++){
+
+
+  }  }
 
 
 
@@ -388,8 +466,8 @@ if(
 	     gh=gh+1;
 	     gh=gh*2;
 
-
-xtrig[tri]=x+y*2;tri=tri+x;y=y+t;t=t/20;  }  }
+		   life=life+200;
+xtrig[tri]=x+y*2;ytrig[tri]=x+y*2;tri=tri+x;y=y+t;t=t/20;  }  }
 
 void bullet()    {
 
@@ -434,6 +512,7 @@ int main(){
 
 	     }
  getch();
+
   /* printf("Hello, world!\n"); */
 
 
@@ -444,13 +523,10 @@ int main(){
   {
 
 
-
-
-
 moving();
-t++;
-
-
+//t++;
+//colli();
+life=life-1;
 if (y>=175){r=-(r);} if (y>=190){y=175;}
 if (k>1){k=1;}
 if (x>=310){o=-(o);} if (x>=320){x=320;}
@@ -462,19 +538,23 @@ if(y<=10){r=-(r); }  if(y<=0){y=o; }
 //if (z>0){z=0;}
 if (ytrig[tri]>175){ytrig[tri]=10;xtrig[tri]=xtrig[x]*30-sc; sc=sc-4;}
 if (co>10){co=1;}
-yscroll++;
+
 if (icony[3]<10){icony[3]==10;}
 //if (xtrig<0){xtrig=0; }
-if (yscroll>=180){yscroll==0;}
+
 
 if (xscroll>=310){xscroll==10; }
+if (yscroll>239){yscroll=1 ;}
 
-
+yscroll++;
 if (xtrig[tri]>310){xtrig[tri]=xtrig[tri]; }
 if (xtrig[tri]<10){xtrig[tri]=10; }
 if (ytrig[tri]<10){ytrig[tri]=10;re1=re1-1;xtrig[tri]=xtrig[tri]-20; }
 if (t>=30){t==1;}
 
+       horiz++;
+
+  road();
 
 
 chara(tri);
@@ -531,12 +611,16 @@ scoremath();
 
 //      }
 if (sc>-30){sc=-30;}
+
+
+
+  default_scene_bg();
   default_scene();
-    default_scene_bg();
+
       default_scene_bg2();
 
 
-//bullet();
+
 //ytrig[tri]++;
 //icon();
 
@@ -603,8 +687,10 @@ chara(tri);
        //tri++;
        kc=getch();
       if( kc == (char)0 ) {
+
 	kc=getch();
 	/* special key handling */
+
 	switch( kc )
 	{
 
@@ -660,9 +746,13 @@ chara(tri);
 
 	    ol=0;
        //	  sprintf(s, "00 %02x", kc);
-	 break;
+
 	}
+
+
       }
+
+
 
 
 
