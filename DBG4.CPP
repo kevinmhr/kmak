@@ -1,15 +1,16 @@
+
 // dragchase by keyvan mehrbakhsh 2022
 // try too shoot before the red stick below gets to the yellow sign.
 
-
-#include <alloc.h>
-#include <conio.h>
-#include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream.h>
 
+
+#include <alloc.h>
+#include <conio.h>
+#include <dos.h>
 #include <math.h>
 #define NUM_COLORS 256
 
@@ -23,7 +24,7 @@ int yscroll;
 int height= 320;
 int width= 240;
 int ff();
-int life=5000;
+int life=10000;
 
 #define PALETTE_INDEX 0x3C8
 #define PALETTE_DATA 0x3C9
@@ -34,14 +35,13 @@ byte far *VGA=(byte far *)0xA0000000L;
 byte far *GGG=(byte far *)0xA0000000L;
 int x=150;
 int  y=150;
+int shuf;
 int charx;
 int chary;
 int showx;
 int showy;
-#define SETPIX(x,y,c) *(VGA+(x)+(y)+height)=c
+#define SETPIX(x,y,c) *(VGA+(x)+(y)*height)=c
 #define GETPIX(x,y,c) *(VGA+(x)+(y)*height)=c
-#define TARGPIX(targx,targy,c) *(VGA+(targx)+(targy)*320)=c
-#define BULLETPIX(targx,targy,c) *(VGA+(targx)+(targy)*320)=c
 #define PI 3.14
 
 
@@ -90,8 +90,8 @@ int bally[]= {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,
 int charax[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4};
 int charay[]={2,3,3,4,5,5,6,4,9,9,1,1,1,4,5,6,7,7,7,7,1,1,1,4,5,6,7,7,7,7,2,3,3,5,5,6,4,4,9,9,};
 
-int roadx[320];
-int roady[240];
+int roadx[1024];
+int roady[1024];
 
 
 
@@ -174,38 +174,28 @@ void snd()
 
 
 
-
-
-
-
-
-
-
-
 void road(){
-		if (horiz==real){horiz=0;}
-		      for (int real=0;real<240;real++){
-	   for (int reat=0;reat<320;reat++){
 
 
-	       roadx[reat]=reat&real+horiz;
-	       roady[real]=real^reat+horiz;
+	  //	    for (int real=0;real<320;real++){
 
+	//   for (int reat=0;reat<240;reat++){
 
-
-		if (roadx[reat]==charx){
-
-
-			if (roady[real]==showy){life=life-100;sound(reat*10);}}
-
-
-		GETPIX(roadx[reat],roady[real],1);
+	    //   if (showx){showx=showx+200;}
 
 
 
-  }
+		if (showx==charx)
 
-    }
+
+	       if (showy==chary){life=life-30;sound(horiz*10);}
+
+
+
+
+ // }
+
+   //}
 
 
 	       }
@@ -217,6 +207,48 @@ void road(){
 
 
 
+
+
+
+
+
+
+
+void showroad(){
+
+	    if ( horiz==5){horiz=0;   }
+	    if ( shuf==200){shuf=0;   }
+		for (int real=0;real<200;real++){
+
+	   for (int reat=0;reat<320;reat++){
+
+	    //   if (showx){showx=showx+200;}
+
+	   road();
+
+		  roadx[reat+shuf]=(reat^shuf);
+		  roady[real]=(real&reat)+horiz
+		  ;
+		showx=(roadx[reat]);
+		showy=(roady[real]);
+
+	 // if (horiz=y){roady[real]=roady[real]+y;}
+
+	      SETPIX(showx,showy,1);
+
+
+
+  }
+
+    }
+	   horiz++;
+
+
+
+
+
+
+}
 
 
 
@@ -296,7 +328,8 @@ void default_scene3()
 void default_scene()   {
 	   for (int t=0;t<40;t++){
 		     charx=charax[t]+(x);
-		     chary=charay[t]+(y);
+		     chary=charay[t]+(y)
+		     ;
 	      GETPIX(charx,chary,t);
 
 
@@ -466,8 +499,8 @@ if(
 	     gh=gh+1;
 	     gh=gh*2;
 
-		   life=life+200;
-xtrig[tri]=x+y*2;ytrig[tri]=x+y*2;tri=tri+x;y=y+t;t=t/20;  }  }
+		   life=life+1000;
+xtrig[tri]=x+y*tri;ytrig[tri]=x+y*tri;tri=tri+x;y=y+t;t=t/20;  }  }
 
 void bullet()    {
 
@@ -522,19 +555,19 @@ int main(){
 
   {
 
-
+  shuf++;
 moving();
 //t++;
 //colli();
 life=life-1;
-if (y>=175){r=-(r);} if (y>=190){y=175;}
+if (y>=175){r=-(r);} if (y>=170){y=175;}
 if (k>1){k=1;}
-if (x>=310){o=-(o);} if (x>=320){x=320;}
+if (x>=310){o=-(o);} if (x>=310){x=310;}
 //if (x>10){xtrig--;}
 if (tri>=80 ){tri=1;}
 
-if(y<=10){r=-(r); }  if(y<=0){y=o; }
- if (x<=10){o=-(o);}  if (x<=0){x=0;}
+if(y<=10){r=-(r); }  if(y<=10){y=10; }
+ if (x<=10){o=-(o);}  if (x<=10){x=10;}
 //if (z>0){z=0;}
 if (ytrig[tri]>175){ytrig[tri]=10;xtrig[tri]=xtrig[x]*30-sc; sc=sc-4;}
 if (co>10){co=1;}
@@ -544,17 +577,17 @@ if (icony[3]<10){icony[3]==10;}
 
 
 if (xscroll>=310){xscroll==10; }
+yscroll++;
 if (yscroll>239){yscroll=1 ;}
 
-yscroll++;
+
 if (xtrig[tri]>310){xtrig[tri]=xtrig[tri]; }
 if (xtrig[tri]<10){xtrig[tri]=10; }
 if (ytrig[tri]<10){ytrig[tri]=10;re1=re1-1;xtrig[tri]=xtrig[tri]-20; }
 if (t>=30){t==1;}
 
-       horiz++;
 
-  road();
+
 
 
 chara(tri);
@@ -626,6 +659,8 @@ if (sc>-30){sc=-30;}
 
 
 
+
+showroad();
 caar();
 
   default_scene3();
@@ -655,7 +690,7 @@ if (tri>=3){tri=1;}
 chara(tri);
 
 
-   if (x<=-(icony[3])-sc |  x>=(icony[3])+320+sc) {
+   if (x<=-(icony[3])-sc |  x>=(icony[3])+320+sc | life<=0 ) {
 					for (l=0;l<sizeof go*8
 					;l++  ){
  put_char (go[l],l*8,80,1,VGA);
