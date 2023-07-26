@@ -52,6 +52,7 @@ int showy;
   int l=1;
   int g=1;
   int real,reat;
+  int increm;
   int r;
   int ol=0;
 int sc=-10;
@@ -87,7 +88,7 @@ int ballx[]={1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7
 	     9,9,9,9,9,10,10,10,10,10,11,11,11,11,11,12,12,12,12,12,13,13,13,13,13,14,14,14,14,14};
 int bally[]= {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5
 	    ,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5};
-int charax[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4};
+//int charax[]={};
 int charay[]={2,3,3,4,5,5,6,4,9,9,1,1,1,4,5,6,7,7,7,7,1,1,1,4,5,6,7,7,7,7,2,3,3,5,5,6,4,4,9,9,};
 
 int roadx[1024];
@@ -263,7 +264,7 @@ void default_scene_bg()
 			      for (int t=0;t<40;t++){
 			     for (int l=0;l<(life/1000);l++){
 
-		 GETPIX(charax[t]+40+(10*l),charay[t]+5,t);
+		 GETPIX((t/8)+40+(10*l),charay[t]+5,t);
 
 
 
@@ -298,10 +299,10 @@ void default_scene_bg2()
 
 
 
-	      GETPIX(40+x,160+t+y*((x)),x);
-	      GETPIX(160+x+t*2,158+y*((y)),x);
-	       GETPIX(-160+x,160+t+y*((x)),x);
-	      GETPIX(160+x+t*2,258+y*((y)),x);
+	    //  GETPIX(40+x,160+t+y*((x)),x);
+	    //  GETPIX(160+x+t*2,158+y*((y)),x);
+	    //   GETPIX(-160+x,160+t+y*((x)),x);
+	    //  GETPIX(160+x+t*2,258+y*((y)),x);
 
 
 			      }
@@ -326,18 +327,43 @@ void default_scene3()
 
 			}
 void default_scene()   {
-	   for (int t=0;t<40;t++){
-		     charx=charax[t]+(x);
-		     chary=charay[t]+(y)
+	   for (int t=0;t<300;t++){
+		  increm++;
+		  int i;
+		 int j;
+		 j=cos(increm)*((t/40)+(y/100));
+		 //if (j>=10){j=0;}
+
+		  i=sin(increm)*t/30;
+		int k=i;
+
+		     charx=(x);
+		     chary=(y)
 		     ;
-	      GETPIX(charx,chary,t);
+	      GETPIX((i+1)+x,j+y,t);
+	      GETPIX((i-1)+x,j+y,t);
+	       GETPIX((i)+x,j+1+y,2);
+		GETPIX((i)+x,j-1+y,3);
+		GETPIX((i)+x,j+y,3);
+		GETPIX((i+1)+x,j+1+y,3);
+		GETPIX((i-1)+x,j-1+y,6);
+	       GETPIX((i+1)+x,j-1+y,6);
+		GETPIX((i-1)+x,j+1+y,6);
 
 
 
 
 
 
-			    }
+
+
+	 }
+
+
+
+
+
+
 
 
 
@@ -485,7 +511,7 @@ collide(){
 if(
 
 
-  charax[tri]+(x) == xtrig[tri]+5 & charay[tri]+(y)-bulletl == ytrig[tri]
+  (x) == xtrig[tri]+5 & charay[tri]+(y)-bulletl == ytrig[tri]
 
 
 )
@@ -513,7 +539,7 @@ void bullet()    {
 
 
 
-	      GETPIX(charax[t]+(x),charay[t]+y-bulletl,6);
+	      GETPIX((x),charay[t]+y-bulletl,6);
 
 
 			    sound(bulletl+2000);
