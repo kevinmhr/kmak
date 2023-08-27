@@ -1,4 +1,5 @@
 
+
 // dragchase by keyvan mehrbakhsh 2022
 // try too shoot before the red stick below gets to the yellow sign.
 
@@ -186,10 +187,10 @@ void road(){
 
 
 
-		if (showx==charx)
+		if (showx==x)
 
 
-	       if (showy==chary){life=life-30;sound(horiz*10);}
+	       if (showy==y){life=life-30;sound(horiz*10);y=y+1;}
 
 
 
@@ -217,8 +218,6 @@ void road(){
 
 void showroad(){
 
-	    if ( horiz==5){horiz=0;   }
-	    if ( shuf==200){shuf=0;   }
 		for (int real=0;real<200;real++){
 
 	   for (int reat=0;reat<320;reat++){
@@ -227,22 +226,24 @@ void showroad(){
 
 	   road();
 
-		  roadx[reat+shuf]=(reat^shuf);
-		  roady[real]=(real&reat)+horiz
+		  roadx[reat]=(real^shuf^reat)+ballx[reat&real];
+		  roady[real]=(real^shuf^reat)^bally[real&real]-shuf
 		  ;
-		showx=(roadx[reat]);
-		showy=(roady[real]);
+		showx=+(roadx[reat]);
+		showy=+(roady[real]);
 
 	 // if (horiz=y){roady[real]=roady[real]+y;}
 
-	      SETPIX(showx,showy,1);
+	      SETPIX(showx,showy+shuf,ballx[reat]);
 
-
+	    if ( horiz==5){horiz=0;   }
+	  //  if ( shuf==200){shuf=0;   }
+	 horiz++;
 
   }
 
     }
-	   horiz++;
+    shuf++;
 
 
 
@@ -581,7 +582,7 @@ int main(){
 
   {
 
-  shuf++;
+
 moving();
 //t++;
 //colli();
