@@ -22,10 +22,12 @@
 int xscroll;
 int gh;
 int yscroll;
-int height= 320;
-int width= 240;
+int height= 200;
+int width= 320;
 int ff();
 int life=10000;
+  int roadmapx2[20];
+	    int roadmapy2[20];
 
 #define PALETTE_INDEX 0x3C8
 #define PALETTE_DATA 0x3C9
@@ -41,8 +43,8 @@ int charx;
 int chary;
 int showx;
 int showy;
-#define SETPIX(x,y,c) *(VGA+(x)+(y)*height)=c
-#define GETPIX(x,y,c) *(VGA+(x)+(y)*height)=c
+#define SETPIX(x,y,c) *(VGA+(x)+(y)*width)=c
+#define GETPIX(x,y,c) *(VGA+(x)+(y)*width)=c
 #define PI 3.14
 
 
@@ -57,6 +59,7 @@ int showy;
   int r;
   int ol=0;
 int sc=-10;
+int sc2=-10;
 int scxpos=180;
 int targx,bullx;
 int targy,bully,tempy;
@@ -121,9 +124,10 @@ int chiy[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,
 	     , 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10};
 
 int location[]={10,90,30,60,20,70};
+int roadmapx[20]={80,80,90,50,50,10,10,20,40,40,100,100,100,40,50,90,100,120,120,120};
+int roadmapy[20]={10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200};
 
-
-
+//int roadmap2[40];
 int iconx[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
 	     , 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10
 	    ,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
@@ -211,48 +215,59 @@ void road(){
 
 
 
+void copyroad(){
+		for (int reat=0;reat<20;reat++){
+	    roadmapx2[reat]=roadmapy[reat];
 
 
+roadmapy2[reat]=roadmapx[reat];  }
+}
+
+void makebox(){
+
+}
 
 
 void showroad(){
-		 for (int row=0;row<10;row++){
+       //	int row;
+
+	      for (int reat=0;reat<20;reat++){
+	   if (yscroll==180){roadmapx2[reat]=roadmapx2[reat]+10;}
+	 for (int row=0;row<10;row++){
+
 		 for (int column=0;column<15;column++){
-		for (int real=0;real<200;real=real+20){
 
-	   for (int reat=0;reat<320;reat=reat+20){
 
-	    //   if (showx){showx=showx+200;}
-	      //	 reat=reat+ballx[real];
+
+
+
 
 
 		  roadx[column]=(column^row&shuf);
-		  roady[row]=(row^column)+shuf
+		  roady[row]=(row^column)
 		  ;
-		showx=(roadx[column])-x;
-		showy=(roady[row]);
+		showx=roadx[column];
+		showy=roady[row];
 
-	 // if (horiz=y){roady[real]=roady[real]+y;}
-		if ((showx+reat+5)==(charx))
 
-		    {charx=charx-5;}
-			if ((showx+reat-5)==(charx))
-		     {charx=charx+5;}
 
-	      SETPIX(showx+reat,showy+real,bally[column]);
 
-	    if ( horiz==5){horiz=0;   }
-	  //  if ( shuf==200){shuf=0;   }
-	 horiz++;
+	      SETPIX(showx+(roadmapx2[reat]),showy+roadmapy2[reat],showx);
 
-  }
 
-    }
+	  if (showx+(roadmapx2[reat])==charx+10&showy+(roadmapy2[reat])==chary) { roadmapx2[reat]=400;roadmapy2[reat]=400;roadmapx2[reat]=roadmapx[reat];roadmapy2[reat]=roadmapy[reat];}
+	// horiz++;
 
-	       }       }
 
-	      shuf++;
 
+
+
+
+
+ }
+
+     }}
+    shuf++;
 
 
 }
@@ -334,27 +349,28 @@ void default_scene3()
 			}
 void default_scene()   {
 	   for (int t=0;t<300;t++){
-		  increm++;
+		  increm=increm+10;
 		  int i;
 		 int j;
-		 j=cos(increm)*((t/40)+(y/100));
+		 j=cos(increm)*((t/35));
 		 //if (j>=10){j=0;}
 
-		  i=sin(increm)*t/30;
+		  i=tan(increm)*t/30;
 		int k=i;
 
-		     charx=(x);
-		     chary=(y)
-		     ;
-	      GETPIX((i+1)+x,j+y,t);
-	      GETPIX((i-1)+x,j+y,t);
-	       GETPIX((i)+x,j+1+y,2);
-		GETPIX((i)+x,j-1+y,3);
-		GETPIX((i)+x,j+y,3);
-		GETPIX((i+1)+x,j+1+y,3);
-		GETPIX((i-1)+x,j-1+y,6);
-	       GETPIX((i+1)+x,j-1+y,6);
-		GETPIX((i-1)+x,j+1+y,6);
+
+
+
+		GETPIX((i)+xtrig[tri],j+ytrig[tri],3);
+	     // GETPIX((i+1)+x,j+y,3);
+	     // GETPIX((i-1)+x,j+y,3);
+	     //  GETPIX((i)+x,j+1+y,3);
+	      //	GETPIX((i)+x,j-1+y,3);
+
+	      //	GETPIX((i+1)+x,j+1+y,3);
+	      //	GETPIX((i-1)+x,j-1+y,1);
+	      // GETPIX((i+1)+x,j-1+y,1);
+	   //	GETPIX((i-1)+x,j+1+y,1);
 
 
 
@@ -407,9 +423,12 @@ void chara(tri)
 		       //	   GETPIX ( iconx[1]+carp+100,icony[3]+sc,t);
 			  GETPIX ( sc,carp*2+20,t);
 
-			GETPIX( ballx[carp
-			]+xtrig[tri], bally[carp]+ytrig[tri], 3 );
-
+		     //	GETPIX( ballx[carp
+		     //	]+xtrig[tri], bally[carp]+ytrig[tri], 3 );
+		       charx=(x);
+		     chary=(y);
+			GETPIX( ballx[carp/2
+			]+charx, bally[carp]+chary, 3 );
 
 
 
@@ -536,16 +555,17 @@ xtrig[tri]=x+y*tri;ytrig[tri]=x+y*tri;tri=tri+x;y=y+t;t=t/20;  }  }
 
 void bullet()    {
 
-		     for (t=0;t<40;t++){
+		     for (t=0;t<100
+		     ;t++){
 		  if (ol==1){
 
 			     for(bulletl=charay[t]+y;bulletl>0;bulletl--){
 
+						    bulletl=bulletl-5;
 
 
 
-
-	      GETPIX((x),charay[t]+y-bulletl,6);
+	      GETPIX((x)+5,charay[t]+y-bulletl-15,6);
 
 
 			    sound(bulletl+2000);
@@ -565,7 +585,7 @@ int main(){
 
 
   init_font();
-
+  copyroad();
   char kc = 0;
   char s[255];
   byte *pal;
