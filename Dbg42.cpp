@@ -19,23 +19,13 @@
 #define VIDEO_INT 0x10
 #define VGA_256_COLOR_MODE 0x13
 #define TEXT_MODE 0x03
-int xscroll;
-int gh;
-int yscroll;
-int height= 200;
-int width= 320;
-int ff();
-int life=10000;
-  int roadmapx2[20];
-	    int roadmapy2[20];
-
 #define PALETTE_INDEX 0x3C8
 #define PALETTE_DATA 0x3C9
 #include "font.c"
 typedef unsigned char byte;
 typedef unsigned char text;
 byte far *VGA=(byte far *)0xA0000000L;
-byte far *GGG=(byte far *)0xA0000000L;
+
 int x=150;
 int  y=150;
 int shuf;
@@ -43,13 +33,13 @@ int charx;
 int chary;
 int showx;
 int showy;
-#define SETPIX(x,y,c) *(VGA+(x)+(y)*width)=c
+#define SETPIX(x,y,c) *(VGA+(x)+(y)*320)=c
 #define GETPIX(x,y,c) *(VGA+(x)+(y)*width)=c
 #define PI 3.14
 
 
-//#define MAX(x,y) ((x) > (y) ? (x) : (y))
-//#define MIN(x,y) ((x) < (y) ? (x) : (y))
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
+#define MIN(x,y) ((x) < (y) ? (x) : (y))
   int i,k,c,o,z,p,s,move,t;
   int bulletl=1;
   int l=1;
@@ -71,8 +61,18 @@ int re3=1;
 int re4=1;
 int re5=1;
 int re6=1;
+int xscroll;
+int gh;
+int yscroll;
+int height= 200;
+int width= 320;
+int ff();
+int life=10000;
+  int roadmapx2[20];
+	    int roadmapy2[20];
 
-int horiz;
+
+
 
 
 int co=1;
@@ -84,8 +84,6 @@ void set_mode(byte mode)
   regs.h.al = mode;
   int86( VIDEO_INT, &regs, &regs );
 }
-int blox[]={1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8};
-int bloy[]={1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5.1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5};
 
 
 int ballx[]={1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,
@@ -95,8 +93,8 @@ int bally[]= {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,
 //int charax[]={};
 int charay[]={2,3,3,4,5,5,6,4,9,9,1,1,1,4,5,6,7,7,7,7,1,1,1,4,5,6,7,7,7,7,2,3,3,5,5,6,4,4,9,9,};
 
-int roadx[1024];
-int roady[1024];
+int roadx[100];
+int roady[100];
 
 
 
@@ -110,18 +108,6 @@ int roady[1024];
 
 int mapx[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4};
 int mapy[]={1,2,3,3,3,3,5,5,9,9,1,1,3,4,5,6,7,7,9,9,1,1,3,4,5,6,7,7,9,9,1,2,3,3,3,3,5,5,9,9,};
-
-
-int chix[]={4,4,4,4,4,1,1,1,1,1,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,1,1,4,4,4,4,4
-	      ,	1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10
-	    ,4,4,4,4,4,1,1,1,1,1,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,1,1,4,4,4,4,4
-	      ,	1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10};
-
-int chiy[]={1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
-
-	     ,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10
-	    ,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4
-	     , 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10};
 
 int location[]={10,90,30,60,20,70};
 int roadmapx[20]={80,80,90,50,50,10,10,20,40,40,100,100,100,40,50,90,100,120,120,120};
@@ -149,7 +135,6 @@ char score[]={'0','0','1','2','3','4','5','6','7','8','9','0'};
 
 
 
-int charac[]={3,3,3,3,3,3,3,3,3,3,4,2,2,2,2,2,2,2,2,4,4,2,2,2,2,2,2,2,2,4,3,3,3,3,3,3,3,3,3,3};
 void put_pixels(){
 
  union REGS regs;
@@ -220,19 +205,39 @@ void copyroad(){
 	    roadmapx2[reat]=roadmapy[reat];
 
 
-roadmapy2[reat]=roadmapx[reat];  }
+roadmapy2[reat]=roadmapx[reat]++;  }
 }
 
 void makebox(){
+    int op;
+	 for (reat=0;reat<20;reat++){
+	 op++;
+	 if (op>20){op=0;}
+
+	  reat++;
+	  roadmapy2[reat]=roadmapy2[reat]+1;
+				     }
 
 }
 
 
 void showroad(){
        //	int row;
+		    int op,drawx,drawy;
+
+	     for (int t=0;t<1;t++){
 
 	      for (int reat=0;reat<20;reat++){
+
+
+
+
 	   if (yscroll==180){roadmapx2[reat]=roadmapx2[reat]+10;}
+
+		   // if (op>20){op=0;
+		    // }
+
+
 	 for (int row=0;row<10;row++){
 
 		 for (int column=0;column<15;column++){
@@ -242,21 +247,25 @@ void showroad(){
 
 
 
-
-		  roadx[column]=(column^row&shuf);
-		  roady[row]=(row^column)
+		  column++;
+		  roadx[column]=(row^column);
+		  roady[row]=(column)
 		  ;
 		showx=roadx[column];
 		showy=roady[row];
+		  drawx=showx+roadmapx2[reat];
+		  drawy=showy+roadmapy2[reat];
 
 
 
 
-	      SETPIX(showx+(roadmapx2[reat]),showy+roadmapy2[reat],showx);
+
+	      SETPIX(drawx,drawy,roadmapy2[reat]);
 
 
-	  if (showx+(roadmapx2[reat])==charx+10&showy+(roadmapy2[reat])==chary) { roadmapx2[reat]=400;roadmapy2[reat]=400;roadmapx2[reat]=roadmapx[reat];roadmapy2[reat]=roadmapy[reat];}
-	// horiz++;
+	  if (showx+(roadmapx2[reat])==charx+10&showy+(roadmapy2[reat])==chary) {sc=sc+1;sound(roadmapy2[reat]*100); roadmapx2[reat]=400;roadmapy2[reat]=400;roadmapx2[reat]=roadmapx[reat];roadmapy2[reat]=roadmapy[reat];}
+
+	 // horiz++;
 
 
 
@@ -266,8 +275,12 @@ void showroad(){
 
  }
 
-     }}
+     }
+
+     }                             }
+
     shuf++;
+
 
 
 }
@@ -281,7 +294,7 @@ void showroad(){
 void default_scene_bg()
 		       {
 
-
+			      for (int y=0;y<50;y++){
 			      for (int t=0;t<40;t++){
 			     for (int l=0;l<(life/1000);l++){
 
@@ -289,7 +302,7 @@ void default_scene_bg()
 
 
 
-			    }}
+			    }}   }
 
 	    // for (int cari=0;cari<10;cari++){
 	   for (int i=0;i<50;i++){
@@ -313,21 +326,6 @@ void default_scene_bg()
 
 
 }
-void default_scene_bg2()
-		       {
-	    // for (int cari=0;cari<10;cari++){
-	   for (int t=0;t<10;t++){
-
-
-
-	    //  GETPIX(40+x,160+t+y*((x)),x);
-	    //  GETPIX(160+x+t*2,158+y*((y)),x);
-	    //   GETPIX(-160+x,160+t+y*((x)),x);
-	    //  GETPIX(160+x+t*2,258+y*((y)),x);
-
-
-			      }
-				   }
 
 void default_scene3()
 		       {
@@ -338,7 +336,7 @@ void default_scene3()
 
 
 
-	      GETPIX(blox[r],bloy[r]+(bloy[(g*50)+yscroll])+(g),sc);
+	      GETPIX(iconx[r],icony[r]+(icony[(g*50)+yscroll])+(g),sc);
 
 				//key++;
 			  // if (key==40){key==1;}
@@ -358,9 +356,9 @@ void default_scene()   {
 		  i=tan(increm)*t/30;
 		int k=i;
 
-
-
-
+		   int l=cos(increm)*((t/10))*(sc/5);
+		     int h=sin(increm)*((t/10))*(sc/5);
+					GETPIX((l)-100,h-100,3);
 		GETPIX((i)+xtrig[tri],j+ytrig[tri],3);
 	     // GETPIX((i+1)+x,j+y,3);
 	     // GETPIX((i-1)+x,j+y,3);
@@ -379,7 +377,6 @@ void default_scene()   {
 
 
 
-	 }
 
 
 
@@ -389,27 +386,8 @@ void default_scene()   {
 
 
 
-}
-void caar(){
 
-
-
-
-	 for (int cari=0;cari<2000;cari++){
-		    for (int t=0;t<900;t++){
-
-
-	 //		      GETPIX(yscroll+carp*5,yscroll+cari*5,sc);
-	   //   GETPIX(xscroll+carp*10+x+sc,yscroll+cari*5+sc,sc);
-	     //	   GETPIX(xscroll*cari,yscroll^tri,4+tri);
-	     // GETPIX(xscroll+carp*10+x+sc,yscroll+cari*10+y,1);
-	       //	      GETPIX(xscroll*carp,yscroll^tri,4+tri);
-	     // GETPIX(xscroll+cari*10+x,yscroll+cari*10+y+sc,1);
-
-
-
-			}
-}}
+}  }
 
 void chara(tri)
 
@@ -433,7 +411,7 @@ void chara(tri)
 
 
 
-			       }
+				  }
 
 
 
@@ -448,17 +426,6 @@ void chara(tri)
 }
 
 
-
-void icon(){
-
-	       for (int carp=0;carp<40;carp++){
-     //	GETPIX( iconx[carp]+xtrig+8, icony[carp]+ytrig+8, xtrig );
-		     //  GETPIX( icony[carp]+xtrig-8, iconx[carp]+ytrig-8, ytrig );
-
-		       }
-
-
-}
 void clsc(int opaq){
 
 
@@ -496,18 +463,10 @@ void clsc(int opaq){
  }
 
 
-void colli(){
-	    for(real=0;real<200;real++){
-
-	   for (reat=0;reat<320;reat++){
-
-
-  }  }
 
 
 
 
-}
 void scoremath(){
 
 
@@ -521,11 +480,11 @@ void scoremath(){
 
 
 void moving(){
+
 	 x=x+o;
 y=y+r;
 	 y=y+k;
 k=k*z;
-
 
 
 
@@ -702,7 +661,7 @@ showroad();
 
   default_scene();
 
-      default_scene_bg2();
+
 
 
 
@@ -713,14 +672,14 @@ showroad();
 
 
 
-caar();
+
 
   default_scene3();
-//default_scene();
+  default_scene();
 
   default_scene_bg();
 bullet();
-
+ for (int t=0;t<1000;t++){  	 for (int o=0;o<1000;o++){}}
 if (sc>1){key=key*100000;}
 if (sc>=200){sc--;}
 
